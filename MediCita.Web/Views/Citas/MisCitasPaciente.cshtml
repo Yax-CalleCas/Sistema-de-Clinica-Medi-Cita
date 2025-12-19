@@ -1,0 +1,79 @@
+﻿@model List<MediCita.Web.Entidades.Cita>
+@{
+    ViewData["Title"] = "Mis Citas";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"> Mis Citas Médicas</h2>
+        <span class="text-muted">Total: @Model.Count</span>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center shadow-sm">
+             Aún no tienes citas registradas.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive shadow rounded-3">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-primary text-center">
+                    <tr>
+                        <th>Especialista (CMP)</th>
+                        <th>Fecha</th>
+                        <th>Horario</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model.OrderByDescending(x => x.FechaCita))
+                    {
+                        <tr>
+                            <td class="fw-semibold">@c.CMP</td>
+                            <td>@c.FechaCita.ToString("dd/MM/yyyy")</td>
+                            <td class="text-muted">
+                                @c.HoraInicio.ToString(@"hh\:mm") - @c.HoraFin.ToString(@"hh\:mm")
+                            </td>
+                            <td class="fw-bold">@c.MontoPagar.ToString("C")</td>
+                            <td class="text-center">
+                                @switch (c.Estado)
+                                {
+                                    case "P":
+                                        <span class="badge rounded-pill bg-warning text-dark"> Pendiente</span>
+                                        break;
+                                    case "A":
+                                        <span class="badge rounded-pill bg-success"> Atendida</span>
+                                        break;
+                                    case "C":
+                                        <span class="badge rounded-pill bg-danger"> Cancelada</span>
+                                        break;
+                                    default:
+                                        <span class="badge rounded-pill bg-secondary"> Desconocido</span>
+                                        break;
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

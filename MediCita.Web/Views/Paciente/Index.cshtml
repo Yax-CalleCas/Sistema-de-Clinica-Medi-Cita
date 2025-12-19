@@ -1,0 +1,169 @@
+﻿@{
+    ViewData["Title"] = "Mi Panel de Salud";
+}
+
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-md-8">
+            <h1 class="fw-bold text-navy">Hola, @User.Identity.Name 👋</h1>
+            <p class="text-secondary lead">Bienvenido a tu portal de salud. ¿Qué deseas hacer hoy?</p>
+        </div>
+        <div class="col-md-4 text-md-end d-flex align-items-center justify-content-md-end">
+            <span class="badge rounded-pill bg-soft-primary px-3 py-2 text-primary fw-bold">
+                <i class="fas fa-calendar-check me-1"></i> Paciente Verificado
+            </span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm dashboard-card">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-circle bg-soft-blue mb-4">
+                        <i class="fas fa-pills text-primary fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold">Farmacia Online</h5>
+                    <p class="text-muted small">Explora nuestro catálogo, aprovecha las ofertas y recibe tus medicinas en casa.</p>
+                    <a href="@Url.Action("Catalogo", "Venta")" class="btn btn-primary w-100 rounded-pill py-2 fw-bold mt-3">
+                        Ver Catálogo
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm dashboard-card">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-circle bg-soft-green mb-4">
+                        <i class="fas fa-user-md text-success fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold">Nueva Cita</h5>
+                    <p class="text-muted small">Reserva una cita con nuestros especialistas en minutos y evita colas.</p>
+                    <a href="@Url.Action("CitasIndex", "Citas")" class="btn btn-success w-100 rounded-pill py-2 fw-bold mt-3">
+                        Agendar Ahora
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm dashboard-card">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-circle bg-soft-info mb-4">
+                        <i class="fas fa-notes-medical text-info fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold">Mi Historial</h5>
+                    <p class="text-muted small">Revisa tus citas pasadas, próximas consultas y estados de atención.</p>
+                    <a href="@Url.Action("MisCitas", "Citas")" class="btn btn-info w-100 rounded-pill py-2 fw-bold text-white mt-3">
+                        Consultar Mis Citas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="bg-navy rounded-4 p-5 text-white shadow-lg position-relative overflow-hidden">
+                <div class="row align-items-center">
+                    <div class="col-md-8 position-relative z-1">
+                        <h3 class="fw-bold">¿Tienes una emergencia?</h3>
+                        <p class="opacity-75">Nuestra línea de atención al paciente está disponible las 24 horas del día.</p>
+                        <a href="tel:918751566" class="btn btn-light rounded-pill px-4 fw-bold">
+                            <i class="fas fa-phone-alt me-2 text-danger"></i>Llamar a Central
+                        </a>
+                    </div>
+                    <div class="col-md-4 d-none d-md-block text-center position-relative z-1">
+                        <i class="fas fa-ambulance fs-1 opacity-50 pulse-ambulance"></i>
+                    </div>
+                </div>
+                <div class="circle-decoration"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --navy: #1a2b49;
+        --primary-blue: #006ce4;
+        --soft-blue: #e7f1ff;
+        --soft-green: #e1f7ec;
+        --soft-info: #e0f7fa;
+    }
+
+    .text-navy {
+        color: var(--navy);
+    }
+
+    .bg-navy {
+        background: var(--navy);
+    }
+
+    .bg-soft-primary {
+        background-color: var(--soft-blue);
+    }
+
+    .bg-soft-blue {
+        background-color: var(--soft-blue);
+    }
+
+    .bg-soft-green {
+        background-color: var(--soft-green);
+    }
+
+    .bg-soft-info {
+        background-color: var(--soft-info);
+    }
+
+    .dashboard-card {
+        transition: all 0.3s ease;
+        border-radius: 20px !important;
+    }
+
+        .dashboard-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 1rem 3rem rgba(0,0,0,0.1) !important;
+        }
+
+    .icon-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .circle-decoration {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+        top: -100px;
+        right: -100px;
+    }
+
+    .pulse-ambulance {
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 0.5;
+        }
+
+        50% {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 0.5;
+        }
+    }
+</style>

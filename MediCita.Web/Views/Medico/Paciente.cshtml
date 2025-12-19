@@ -1,0 +1,11 @@
+﻿@model MediCita.Web.Entidades.Usuario
+
+<h2>Información del Paciente</h2>
+
+<div class="card shadow-sm p-4">
+    <p><strong>ID:</strong> @Model.IdUsuario</p>
+    <p><strong>Nombre:</strong> @Model.NombreCompleto</p>
+    <p><strong>Correo:</strong> @Model.Correo</p>
+</div>
+
+<a class="btn btn-secondary mt-3" asp-action="Index">Volver</a>

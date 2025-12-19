@@ -1,0 +1,88 @@
+﻿@model IEnumerable<MediCita.Web.Entidades.ReporteCita>
+
+@{
+    Layout = null;
+}
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Reporte de Citas Médicas</title>
+</head>
+<body>
+
+    <!-- BARRA DE ACCIONES -->
+    <div class="no-print bg-dark text-white py-3 text-center">
+        <button onclick="window.print()" class="btn btn-danger btn-sm px-4">
+            Imprimir / Guardar PDF
+        </button>
+
+        <a asp-action="Index"
+           asp-controller="Reporte"
+           class="btn btn-secondary btn-sm px-4 ms-2">
+            Volver
+        </a>
+    </div>
+
+    <div class="container mt-4">
+
+        <!-- ENCABEZADO -->
+        <div class="row mb-4">
+            <div class="col-8">
+                <h3 class="fw-bold mb-0">MediCita</h3>
+                <p class="mb-0">Reporte de Citas Médicas</p>
+                <small class="text-muted">Documento generado automáticamente</small>
+            </div>
+            <div class="col-4 text-end">
+                <small><strong>Desde:</strong> @ViewBag.FechaInicio</small><br />
+                <small><strong>Hasta:</strong> @ViewBag.FechaFin</small><br />
+                <small><strong>Emisión:</strong> @DateTime.Now.ToString("dd/MM/yyyy")</small>
+            </div>
+        </div>
+
+        <!-- TABLA -->
+        <table class="table table-bordered table-sm align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Paciente</th>
+                    <th>Médico</th>
+                    <th>Especialidad</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.FechaCita.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @(item.HoraInicio.HasValue
+                                                    ? item.HoraInicio.Value.ToString(@"hh\:mm")
+                                                    : "")
+                    </td>
+                    <td>@item.Paciente</td>
+                    <td>@item.Medico</td>
+                    <td>@item.Especialidad</td>
+                    <td>@item.Estado</td>
+                </tr>
+                                }
+            </tbody>
+        </table>
+
+        <!-- PIE -->
+        <div class="text-end mt-3">
+            <small class="text-muted">
+                Total de citas: @Model.Count()
+            </small>
+        </div>
+
+    </div>
+
+</body>
+</html>

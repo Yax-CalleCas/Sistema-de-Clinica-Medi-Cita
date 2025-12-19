@@ -1,0 +1,146 @@
+﻿@{
+    ViewData["Title"] = "Bienvenido";
+}
+
+<!-- Carousel Hero Mejorado -->
+<div id="heroCarousel" class="carousel slide shadow mb-5" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active" style="height: 600px;">
+            <img src="https://examenesmedicosocupacionales.com.pe/wp-content/uploads/2024/12/certificado-medico-de-buena-salud-todo-lo-que-necesitas-saber-1-examenes-medicos-ocupacionales.webp"
+                 class="d-block w-100 h-100" style="object-fit: cover; filter: brightness(0.6);" alt="Hospital moderno">
+            <div class="carousel-caption d-none d-md-block text-start mb-5 pb-5">
+                <h1 class="display-2 fw-bold">Tu Salud, Nuestra Prioridad</h1>
+                <p class="fs-3">Gestiona citas, medicamentos y tu historial médico de forma simple y segura.</p>
+                <button class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    Comenzar Gratis Ahora
+                </button>
+            </div>
+        </div>
+        <div class="carousel-item" style="height: 600px;">
+            <img src="https://img.freepik.com/fotos-premium/doctor-sosteniendo-reloj_38810-6621.jpg"
+                 class="d-block w-100 h-100" style="object-fit: cover; filter: brightness(0.6);" alt="Farmacia digital">
+            <div class="carousel-caption d-none d-md-block text-center">
+                <h1 class="display-3 fw-bold">Farmacia Online 24/7</h1>
+                <p class="fs-3">Compra recetas con entrega rápida y stock en tiempo real.</p>
+            </div>
+        </div>
+        <div class="carousel-item" style="height: 600px;">
+            <img src="https://www.hospitalvrg.gob.pe/wp-content/uploads/2024/07/medium-shot-scientists-posing-together-1-scaled.jpg"
+                 class="d-block w-100 h-100" style="object-fit: cover; filter: brightness(0.6);" alt="Equipo médico">
+            <div class="carousel-caption d-none d-md-block text-end mb-5 pb-5">
+                <h1 class="display-3 fw-bold">Médicos Especialistas</h1>
+                <p class="fs-3">Reserva con los mejores profesionales de la ciudad.</p>
+            </div>
+        </div>
+        <div class="carousel-item" style="height: 600px;">
+            <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1920&q=80"
+                 class="d-block w-100 h-100" style="object-fit: cover; filter: brightness(0.6);" alt="Tecnología salud">
+            <div class="carousel-caption d-none d-md-block text-center">
+                <h1 class="display-3 fw-bold">Tecnología al Servicio de Tu Salud</h1>
+                <p class="fs-3">Plataforma segura, moderna y fácil de usar.</p>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+
+<div class="container mb-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-primary">Nuestros Servicios</h2>
+        <p class="text-muted">Accede a las herramientas de MediCita según tu perfil.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm hover-up text-center p-4">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex p-3 mx-auto mb-3">
+                    <i class="bi bi-calendar-check fs-1"></i>
+                </div>
+                <h4 class="fw-bold">Gestión de Citas</h4>
+                <p class="text-muted small">Reserva o administra tus consultas médicas pendientes.</p>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    var action = User.IsInRole("Administrador") ? "Dashboard" : "Index";
+                    <a asp-controller="Citas" asp-action="@action" class="btn btn-outline-primary btn-sm rounded-pill">Entrar</a>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm hover-up text-center p-4">
+                <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex p-3 mx-auto mb-3">
+                    <i class="bi bi-capsule fs-1"></i>
+                </div>
+                <h4 class="fw-bold">Farmacia Online</h4>
+                <p class="text-muted small">Compra tus recetas y consulta disponibilidad de stock.</p>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a asp-controller="Venta" asp-action="Catalogo" class="btn btn-outline-success btn-sm rounded-pill">Ir a Tienda</a>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm hover-up text-center p-4">
+                <div class="bg-info bg-opacity-10 text-info rounded-circle d-inline-flex p-3 mx-auto mb-3">
+                    <i class="bi bi-file-earmark-bar-graph fs-1"></i>
+                </div>
+                <h4 class="fw-bold">Reportes</h4>
+                <p class="text-muted small">Historial médico y estadísticas de atención.</p>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a asp-controller="Reporte" asp-action="Index" class="btn btn-outline-info btn-sm rounded-pill">Ver Más</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg overflow-hidden">
+            <div class="row g-0">
+                <div class="col-md-5 d-none d-md-block"
+                     style="background: url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80') center/cover;">
+                </div>
+                <div class="col-md-7 p-4">
+                    <div class="text-end"><button class="btn-close" data-bs-dismiss="modal"></button></div>
+                    <div class="text-center mb-4">
+                        <i class="bi bi-hospital-fill text-primary fs-1"></i>
+                        <h3 class="fw-bold">MediCita</h3>
+                    </div>
+                    <form asp-controller="Acceso" asp-action="Login" method="post">
+                        <div class="form-floating mb-3">
+                            <input type="email" name="correo" class="form-control" placeholder="nombre@ejemplo.com" required />
+                            <label>Correo</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" name="clave" class="form-control" placeholder="Contraseña" required />
+                            <label>Contraseña</label>
+                        </div>
+                        <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm">INGRESAR</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            ¿No tienes cuenta?
+                            <a asp-controller="Acceso" asp-action="Registro" class="text-primary fw-bold text-decoration-none">
+                                Regístrate aquí
+                            </a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

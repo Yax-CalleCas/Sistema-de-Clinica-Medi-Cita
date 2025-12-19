@@ -1,0 +1,284 @@
+﻿@{
+    ViewData["Title"] = "Reportes y Estadísticas - MediCita";
+
+    var dash = ViewBag.Dashboard != null
+        ? System.Text.Json.JsonSerializer.Deserialize<dynamic>(ViewBag.Dashboard)
+        : null;
+}
+
+<div class="container-fluid py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">
+            <i class="fas fa-chart-pie me-3"></i>
+            Panel de Reportes y Estadísticas
+        </h1>
+        <p class="lead text-muted">Información en tiempo real de tu clínica</p>
+    </div>
+
+    <!-- TARJETAS RESUMEN -->
+    <div class="row g-4 mb-5">
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-lg h-100 bg-gradient-primary text-white">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-users fa-3x mb-3 opacity-75"></i>
+                    <h2 class="display-5 fw-bold">@(dash?.GetProperty("TotalPacientesActivos").GetInt32() ?? 0)</h2>
+                    <p class="fs-5 mb-0">Pacientes Activos</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-lg h-100 bg-gradient-success text-white">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-user-md fa-3x mb-3 opacity-75"></i>
+                    <h2 class="display-5 fw-bold">@(dash?.GetProperty("TotalMedicos").GetInt32() ?? 0)</h2>
+                    <p class="fs-5 mb-0">Médicos Registrados</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-lg h-100 bg-gradient-info text-white">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-calendar-check fa-3x mb-3 opacity-75"></i>
+                    <h2 class="display-5 fw-bold">@(dash?.GetProperty("CitasHoy").GetInt32() ?? 0)</h2>
+                    <p class="fs-5 mb-0">Citas para Hoy</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-lg h-100 bg-gradient-warning text-white">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-dollar-sign fa-3x mb-3 opacity-75"></i>
+                    <h2 class="display-5 fw-bold">
+                        S/@(dash?.GetProperty("IngresosMesActual").GetDecimal() )
+                    </h2>
+                    <p class="fs-5 mb-0">Ingresos Este Mes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRÁFICOS -->
+    <div class="row g-4">
+        <!-- Top 10 Médicos -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Top 10 Médicos con Más Citas (30 días)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartTopMedicos" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Citas por Especialidad -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Citas por Especialidad</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartEspecialidades"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ingresos Diarios -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Ingresos Diarios - Últimos 30 días</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartIngresos" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Medicamentos + Top Pacientes -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Top 10 Medicamentos Más Vendidos</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartMedicamentos"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Top 10 Pacientes Más Frecuentes</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartPacientes"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie: Citas por Estado -->
+        <div class="col-12 text-center">
+            <div class="card shadow-sm border-0 d-inline-block" style="width: 500px;">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Distribución de Citas por Estado</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartEstadoCitas" width="400" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
+
+    <script>
+        const parse = str => str ? JSON.parse(str) : [];
+
+        const colores = [
+            '#4361ee', '#7209b7', '#3f37c9', '#4895ef', '#4cc9f0',
+            '#560bad', '#3a0ca3', '#3f37c9', '#4361ee', '#4895ef'
+        ];
+
+        // Top Médicos
+        const topMedicos = parse('@Html.Raw(ViewBag.TopMedicos)');
+        new Chart(document.getElementById('chartTopMedicos'), {
+            type: 'bar',
+            data: {
+                labels: topMedicos.map(x => x.Medico),
+                datasets: [{
+                    label: 'Citas Totales',
+                    data: topMedicos.map(x => x.TotalCitas),
+                    backgroundColor: colores[0],
+                    borderRadius: 8
+                }, {
+                    label: 'Atendidas',
+                    data: topMedicos.map(x => x.CitasAtendidas),
+                    backgroundColor: colores[3],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'top' } }
+            }
+        });
+
+        // Citas por Especialidad
+        const espData = parse('@Html.Raw(ViewBag.CitasEspecialidad)');
+        new Chart(document.getElementById('chartEspecialidades'), {
+            type: 'doughnut',
+            data: {
+                labels: espData.map(x => x.Especialidad),
+                datasets: [{
+                    data: espData.map(x => x.TotalCitas),
+                    backgroundColor: colores,
+                    borderWidth: 3,
+                    borderColor: '#fff'
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        });
+
+        // Ingresos Diarios
+        const ingresos = parse('@Html.Raw(ViewBag.IngresosDiarios)');
+        new Chart(document.getElementById('chartIngresos'), {
+            type: 'line',
+            data: {
+                labels: ingresos.map(x => x.Fecha),
+                datasets: [{
+                    label: 'Ingresos Diarios (S/)',
+                    data: ingresos.map(x => x.Ingreso),
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40,167,69,0.2)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#28a745',
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // Top Medicamentos
+        const meds = parse('@Html.Raw(ViewBag.TopMedicamentos)');
+        new Chart(document.getElementById('chartMedicamentos'), {
+            type: 'bar',
+            data: {
+                labels: meds.map(x => x.Nombre),
+                datasets: [{
+                    label: 'Unidades Vendidas',
+                    data: meds.map(x => x.UnidadesVendidas),
+                    backgroundColor: '#e63946'
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        // Top Pacientes
+        const pacientes = parse('@Html.Raw(ViewBag.TopPacientes)');
+        new Chart(document.getElementById('chartPacientes'), {
+            type: 'bar',
+            data: {
+                labels: pacientes.map(x => x.Paciente),
+                datasets: [{
+                    label: 'Citas Totales',
+                    data: pacientes.map(x => x.TotalCitas),
+                    backgroundColor: '#2a9d8f'
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        // Citas por Estado (Pie)
+        const estados = parse('@Html.Raw(ViewBag.CitasEstado)');
+        new Chart(document.getElementById('chartEstadoCitas'), {
+            type: 'pie',
+            data: {
+                labels: estados.map(x => x.Estado),
+                datasets: estados.map(x => x.Cantidad),
+                backgroundColor: ['#ff9f1c', '#2ec4b6', '#e71d36']
+            }],
+            options: { responsive: true }
+        });
+    </script>
+
+    <style>
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .bg-gradient-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .bg-gradient-info {
+            background: linear-gradient(135deg, #657ee4 0%, #6ec4e8 100%);
+        }
+
+        .bg-gradient-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .card {
+            transition: transform 0.3s;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+            }
+    </style>
+}

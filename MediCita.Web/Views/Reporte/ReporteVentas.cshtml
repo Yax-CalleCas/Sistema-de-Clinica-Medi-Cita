@@ -1,0 +1,65 @@
+﻿@model List<MediCita.Web.Entidades.ReporteVenta>
+
+<div class="container mt-4">
+
+    <h4 class="fw-bold mb-3">
+        Reporte de Ventas – Farmacia
+    </h4>
+
+    <small class="text-muted">
+        Periodo: @ViewBag.FechaInicio – @ViewBag.FechaFin
+    </small>
+
+    <table class="table table-striped table-hover mt-3 shadow-sm">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Paciente</th>
+                <th>Medicamento</th>
+                <th>Cant.</th>
+                <th>Precio</th>
+                <th>Descuento</th>
+                <th>Subtotal</th>
+                <th>IGV</th>
+                <th>Total</th>
+                <th>Método</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var v in Model)
+            {
+                <tr>
+                    <td>#@v.IdVenta</td>
+                    <td>@v.Paciente</td>
+                    <td>@v.NombreMedicamento</td>
+                    <td class="text-center">@v.Cantidad</td>
+                    <td class="text-end">S/ @v.PrecioUnitario</td>
+                    <td class="text-center">@v.PorcentajeDescuento %</td>
+                    <td class="text-end">S/ @v.SubTotal</td>
+                    <td class="text-end">S/ @v.IGV</td>
+                    <td class="text-end fw-bold">S/ @v.TotalFinal</td>
+                    <td>@v.MetodoPago</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- PAGINACIÓN -->
+    <nav>
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(ViewBag.Page == i ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="ReporteVentas"
+                       asp-route-page="@i"
+                       asp-route-fechaInicio="@ViewBag.FechaInicio"
+                       asp-route-fechaFin="@ViewBag.FechaFin">
+                        @i
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+
+</div>

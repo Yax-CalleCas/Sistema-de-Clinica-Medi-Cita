@@ -1,0 +1,107 @@
+﻿@model MediCita.Web.Entidades.Venta
+@{
+    ViewData["Title"] = "Finalizar Pedido";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            @if (TempData["ErrorVenta"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show rounded-4 mb-4 shadow-sm" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i> <strong>Atención:</strong> @TempData["ErrorVenta"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="row g-0">
+                    <div class="col-md-6 p-4 p-md-5">
+                        <h3 class="fw-bold mb-4">Finalizar Pago</h3>
+                        <form asp-action="ProcesarVenta" method="post">
+                            <div class="d-grid gap-3 mb-4">
+                                <label class="payment-card card p-3 border shadow-sm cursor-pointer" for="p1">
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-check-input me-3" type="radio" name="metodoPago" id="p1" value="EFECTIVO" checked>
+                                        <div>
+                                            <span class="d-block fw-bold">Efectivo / En Clínica</span>
+                                            <small class="text-muted">Paga al recoger tu pedido</small>
+                                        </div>
+                                        <i class="fas fa-hand-holding-usd ms-auto text-success fs-3"></i>
+                                    </div>
+                                </label>
+
+                                <label class="payment-card card p-3 border shadow-sm cursor-pointer" for="p2">
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-check-input me-3" type="radio" name="metodoPago" id="p2" value="TARJETA">
+                                        <div>
+                                            <span class="d-block fw-bold">Tarjeta Online</span>
+                                            <small class="text-muted">Crédito o Débito</small>
+                                        </div>
+                                        <i class="fas fa-credit-card ms-auto text-primary fs-3"></i>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold py-3 shadow">
+                                <i class="fas fa-lock me-2"></i>PAGAR S/ @Model.Total.ToString("N2")
+                            </button>
+                            <a asp-action="Carrito" class="btn btn-link w-100 text-muted mt-3 text-decoration-none small">
+                                <i class="fas fa-arrow-left me-1"></i> Modificar carrito
+                            </a>
+                        </form>
+                    </div>
+
+                    <div class="col-md-6 bg-light p-4 p-md-5 border-start">
+                        <h5 class="fw-bold mb-4">Resumen de Productos</h5>
+                        <div class="mb-4" style="max-height: 300px; overflow-y: auto; overflow-x: hidden;">
+                            @foreach (var item in Model.Detalles)
+                            {
+                                <div class="row g-0 align-items-center mb-3">
+                                    <div class="col-8">
+                                        <span class="d-block fw-bold text-truncate" style="font-size: 0.9rem;">@item.NombreMedicamento</span>
+                                        <small class="text-muted">Cant: @item.Cantidad x S/ @item.PrecioUnitario.ToString("N2")</small>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <span class="fw-bold text-dark small">S/ @item.Importe.ToString("N2")</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="border-top pt-3">
+                            <div class="d-flex justify-content-between mb-2 small text-muted">
+                                <span>Subtotal</span>
+                                <span>S/ @Model.SubTotal.ToString("N2")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2 small text-muted">
+                                <span>IGV (18%)</span>
+                                <span>S/ @Model.IGV.ToString("N2")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mt-3 text-primary fw-bold h4">
+                                <span>Total</span>
+                                <span>S/ @Model.Total.ToString("N2")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .cursor-pointer {
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .payment-card:hover {
+        border-color: #0d6efd !important;
+        background-color: #f8fbff;
+    }
+
+    .form-check-input:checked ~ div span {
+        color: #0d6efd;
+    }
+</style>

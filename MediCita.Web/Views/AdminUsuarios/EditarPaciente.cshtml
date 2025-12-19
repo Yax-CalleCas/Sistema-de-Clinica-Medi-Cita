@@ -1,0 +1,41 @@
+﻿<form asp-action="EditarPaciente" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="idUsuario" value="@Model.IdUsuario" />
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-8">
+            <label class="form-label">Nombre Completo *</label>
+            <input type="text" name="nombre" value="@Model.NombreCompleto" class="form-control" required />
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">DNI</label>
+            <input type="text" name="dni" value="@Model.DNI" class="form-control" maxlength="8" />
+        </div>
+
+        <div class="col-md-8">
+            <label class="form-label">Correo electrónico *</label>
+            <input type="email" name="correo" value="@Model.Correo" class="form-control" required />
+        </div>
+
+        <select name="activo" class="form-select">
+            @if (Model.Activo)
+            {
+                <option value="true" selected>Activo</option>
+                <option value="false">Inactivo</option>
+            }
+            else
+            {
+                <option value="true">Activo</option>
+                <option value="false" selected>Inactivo</option>
+            }
+        </select>
+
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>

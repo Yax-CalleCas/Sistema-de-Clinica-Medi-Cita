@@ -1,0 +1,149 @@
+﻿@model MediCita.Web.Entidades.Venta
+@{
+    ViewData["Title"] = "¡Compra Exitosa!";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 text-center">
+
+            <div class="mb-4">
+                <i class="fas fa-check-circle text-success display-1"></i>
+            </div>
+
+            <h2 class="fw-bold text-dark">¡Gracias por tu compra!</h2>
+            <p class="text-muted">Tu pedido ha sido procesado con éxito. Número de orden: <strong>#@Model.IdVenta.ToString("D6")</strong></p>
+
+            <div class="card border-0 shadow-lg rounded-4 my-5 overflow-hidden">
+                <div class="card-header bg-primary bg-gradient text-white py-3 border-0">
+                    <h5 class="mb-0 fw-light text-uppercase tracking-wider">Comprobante de Pago</h5>
+                </div>
+
+                <div class="card-body p-4 pt-5 position-relative">
+                    <div class="position-absolute top-0 start-0 translate-middle-y bg-light rounded-circle" style="width: 30px; height: 30px; margin-left: -15px;"></div>
+                    <div class="position-absolute top-0 end-0 translate-middle-y bg-light rounded-circle" style="width: 30px; height: 30px; margin-right: -15px;"></div>
+
+                    <div class="row mb-4 text-start">
+                        <div class="col-6">
+                            <label class="text-muted small text-uppercase d-block">Fecha y Hora</label>
+                            <span class="fw-bold text-dark">@Model.FechaVenta.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                        <div class="col-6 text-end">
+                            <label class="text-muted small text-uppercase d-block">Método de Pago</label>
+                            <span class="badge bg-light text-dark border fw-bold text-uppercase">@Model.MetodoPago</span>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr class="small text-muted">
+                                    <th class="border-0">DESCRIPCIÓN</th>
+                                    <th class="border-0 text-center">CANT.</th>
+                                    <th class="border-0 text-end">SUBTOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Detalles)
+                                {
+                                    <tr>
+                                        <td class="text-start border-0">
+                                            <div class="fw-bold text-dark">@item.NombreMedicamento</div>
+                                            @if (!string.IsNullOrEmpty(item.Promocion))
+                                            {
+                                                <small class="text-success fw-bold">(@item.Promocion)</small>
+                                            }
+                                        </td>
+                                        <td class="text-center border-0 text-muted">@item.Cantidad</td>
+                                        <td class="text-end border-0 fw-bold text-dark">S/ @item.Importe.ToString("N2")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-light rounded-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Subtotal</span>
+                            <span class="text-dark font-monospace">S/ @Model.SubTotal.ToString("N2")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">IGV (18%)</span>
+                            <span class="text-dark font-monospace">S/ @Model.IGV.ToString("N2")</span>
+                        </div>
+                        <hr class="my-2 border-secondary opacity-25">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold fs-5 text-dark">TOTAL PAGADO</span>
+                            <span class="fw-bold fs-4 text-primary font-monospace">S/ @Model.Total.ToString("N2")</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 py-3 border-top border-dashed text-start">
+                        <div class="d-flex align-items-center text-muted">
+                            <i class="fas fa-qrcode fa-3x me-3"></i>
+                            <small>Presenta este comprobante desde tu celular o impreso para recoger tu pedido en farmacia.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white pb-3">
+                    <div class="ticket-sawtooth"></div>
+                </div>
+            </div>
+
+            <div class="d-grid d-sm-flex gap-3 justify-content-center no-print">
+                <a asp-action="Catalogo" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">
+                    <i class="fas fa-shopping-cart me-2"></i>Nueva Compra
+                </a>
+                <button onclick="window.print()" class="btn btn-outline-dark btn-lg rounded-pill px-4 shadow-sm">
+                    <i class="fas fa-print me-2"></i>Imprimir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Efecto decorativo de ticket */
+    .border-dashed {
+        border-style: dashed !important;
+    }
+
+    .ticket-sawtooth {
+        height: 12px;
+        width: 100%;
+        background: radial-gradient(circle, transparent, transparent 50%, #f8f9fa 50%, #f8f9fa 100%) -7px -8px / 16px 16px repeat-x;
+    }
+
+    /* Estilo para impresión */
+    @@media print {
+        .no-print, .navbar, footer {
+            display: none !important;
+        }
+
+        body {
+            background-color: white !important;
+        }
+
+        .container {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+        }
+
+        .card {
+            shadow: none !important;
+            border: 1px solid #eee !important;
+        }
+
+        .shadow-lg {
+            box-shadow: none !important;
+        }
+    }
+
+    .tracking-wider {
+        letter-spacing: 0.1rem;
+    }
+</style>

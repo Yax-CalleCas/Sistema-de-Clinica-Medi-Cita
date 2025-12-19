@@ -1,0 +1,85 @@
+﻿/* Efectos de la Tarjeta */
+.hover-card {
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 1.5rem 4rem rgba(0,0,0,0.15) !important;
+}
+
+/* Imagen con zoom suave */
+.img-container {
+    overflow: hidden;
+    height: 220px;
+}
+
+.main-img {
+    transition: transform 0.5s ease;
+}
+
+.hover-card:hover .main-img {
+    transform: scale(1.1);
+}
+
+/* Alerta de stock crítico */
+.stock-alert {
+    background-color: #fff3f3;
+    color: #dc3545;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px dashed #dc3545;
+    text-align: center;
+}
+
+/* Animación de pulso para urgencia */
+.animate-pulse {
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+/* Selector de Cantidad */
+.quantity-selector {
+    max-width: 100%;
+    transition: border-color 0.3s;
+}
+
+.quantity-selector:focus-within {
+    border-color: #0d6efd !important;
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    background: #e9ecef;
+    color: #0d6efd;
+}
+
+.input-qty {
+    box-shadow: none !important;
+    font-size: 1rem;
+    width: 50px;
+}
+
+/* Quitar flechas por defecto del input number */
+.input-qty::-webkit-inner-spin-button,
+.input-qty::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

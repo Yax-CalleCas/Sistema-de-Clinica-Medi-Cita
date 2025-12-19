@@ -1,0 +1,39 @@
+﻿/* Heredamos la base plomo */
+body { 
+    background-color: #f4f7f6; 
+}
+
+/* Efecto hover profesional */
+#tabla tr { 
+    transition: background-color 0.2s ease; 
+}
+#tabla tr:hover { 
+    background-color: #f8f9fa !important; 
+}
+
+/* Paginación minimalista idéntica a citas */
+.page-link { 
+    color: #495057; 
+    transition: all 0.2s; 
+    border: 1px solid #dee2e6;
+}
+.page-item.active .page-link { 
+    background-color: #495057 !important; 
+    border-color: #495057 !important;
+    color: white !important; 
+}
+
+/* Estilos de tabla corporativa */
+.table thead th {
+    letter-spacing: 0.5px;
+}
+
+.font-monospace {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Ajustes de input */
+.input-group-merge .form-control:focus {
+    border-color: #dee2e6;
+    box-shadow: none;
+}

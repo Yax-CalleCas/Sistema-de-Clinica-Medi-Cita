@@ -1,0 +1,122 @@
+﻿@model MediCita.Web.Entidades.Medicamento
+
+@{
+    ViewData["Title"] = "Crear Medicamento";
+    bool sinDescuento = string.IsNullOrWhiteSpace(Model?.Promocion);
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h4 class="mb-0">Nuevo Medicamento</h4>
+                </div>
+
+                <div class="card-body p-4">
+                    @if (ViewData["Mensaje"] != null)
+                    {
+                        <div class="alert alert-danger">@ViewData["Mensaje"]</div>
+                    }
+
+                    <form asp-action="Crear" method="post">
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre</label>
+                                <input asp-for="Nombre" class="form-control" />
+                                <span asp-validation-for="Nombre" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Laboratorio</label>
+                                <input asp-for="Laboratorio" class="form-control" />
+                                <span asp-validation-for="Laboratorio" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Precio</label>
+                                <input asp-for="Precio" type="number" step="0.01" class="form-control" />
+                                <span asp-validation-for="Precio" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Stock</label>
+                                <input asp-for="Stock" type="number" class="form-control" />
+                                <span asp-validation-for="Stock" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Imagen (URL)</label>
+                                <input asp-for="ImagenUrl" id="ImagenUrlInput" class="form-control" />
+                                <div class="mt-2 text-center">
+                                    <img id="ImagenPreview"
+                                         src="https://via.placeholder.com/200x200?text=Sin+Imagen"
+                                         class="img-thumbnail"
+                                         style="max-height:200px" />
+                                </div>
+                            </div>
+
+                            <!-- Checkbox sin descuento -->
+                            <div class="col-12 form-check mt-3">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       id="chkSinDescuento"
+                                       @(sinDescuento ? "checked" : "") />
+                                <label class="form-check-label" for="chkSinDescuento">
+                                    Sin descuento
+                                </label>
+                            </div>
+
+                            <!-- Promoción -->
+                            <div class="col-12">
+                                <label class="form-label">Promoción (solo %)</label>
+                                <input asp-for="Promocion"
+                                       id="PromocionInput"
+                                       class="form-control"
+                                       placeholder="Ejemplo: 10%"
+                                       disabled="@(sinDescuento)" />
+                                <small class="text-muted">Solo porcentaje. Ej: 10%</small>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Descripción</label>
+                                <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Categoría</label>
+                                <input asp-for="Categoria" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="mt-4 text-end">
+                            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-success ms-2">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const chk = document.getElementById('chkSinDescuento');
+        const promo = document.getElementById('PromocionInput');
+        const inputUrl = document.getElementById('ImagenUrlInput');
+        const preview = document.getElementById('ImagenPreview');
+
+        chk.addEventListener('change', () => {
+            promo.disabled = chk.checked;
+            if (chk.checked) promo.value = '';
+        });
+
+        inputUrl.addEventListener('input', () => {
+            preview.src = inputUrl.value || 'https://via.placeholder.com/200x200?text=Sin+Imagen';
+        });
+    </script>
+}

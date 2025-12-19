@@ -1,0 +1,71 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+/* Efecto para elevar las tarjetas */
+.hover-up {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .hover-up:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+    }
+
+/* Ajuste para el carrusel en móviles */
+.carousel-item img {
+    object-position: center;
+}
+}
++ /* Animación suave para las tarjetas */
+.card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.grayscale {
+    filter: grayscale(100%);
+}
+
+.bg-success-subtle {
+    background-color: #d1e7dd;
+}
+
+.bg-primary-subtle {
+    background-color: #cfe2ff;
+}
+
+.tracking-wider {
+    letter-spacing: 0.05rem;
+}
+
+.btn-light:hover {
+    background-color: #e2e6ea;
+}
+
+/* Efecto hover suave para las filas */
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.02);
+    transition: background-color 0.3s ease;

@@ -1,0 +1,133 @@
+﻿@model MediCita.Web.Entidades.Medico
+@{
+    ViewData["Title"] = "Crear Médico";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="card border-0 shadow-lg rounded-4">
+        <div class="card-header bg-primary bg-gradient text-white rounded-top-4 py-3">
+            <h4 class="mb-0 fw-semibold">
+                <i class="fas fa-user-md me-2"></i> Registrar Nuevo Médico
+            </h4>
+        </div>
+
+        <div class="card-body p-4">
+
+            <form asp-action="CrearMedico" method="post" id="formCrearMedico" class="needs-validation">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Nombre Completo</label>
+                        <input asp-for="NombreCompleto" class="form-control form-control-lg"
+                               placeholder="Ej: Dr. Ricardo Palma" />
+                        <span asp-validation-for="NombreCompleto" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">DNI</label>
+                        <input asp-for="DNI" class="form-control form-control-lg" maxlength="8" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Teléfono</label>
+                        <input asp-for="Telefono" class="form-control form-control-lg" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Correo Electrónico</label>
+                        <input asp-for="Correo" type="email"
+                               class="form-control form-control-lg"
+                               placeholder="correo@ejemplo.com" />
+                        <span asp-validation-for="Correo" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Clave de Acceso</label>
+                        <input name="clave" type="password"
+                               class="form-control form-control-lg"
+                               placeholder="••••••••" required />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Especialidad</label>
+                        <select asp-for="IdEspecialidad"
+                                class="form-select form-select-lg"
+                                asp-items="ViewBag.Especialidades">
+                            <option value="">-- Seleccione --</option>
+                        </select>
+                        <span asp-validation-for="IdEspecialidad" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">CMP</label>
+                        <input asp-for="CMP" class="form-control form-control-lg" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">RNE</label>
+                        <input asp-for="RNE" class="form-control form-control-lg" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Precio Consulta (S/)</label>
+                        <input asp-for="PrecioConsulta" type="number"
+                               step="0.01"
+                               class="form-control form-control-lg" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Duración (min)</label>
+                        <input asp-for="DuracionMinutos" type="number"
+                               class="form-control form-control-lg" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Tipo de Servicio</label>
+                        <input asp-for="TipoServicio"
+                               class="form-control form-control-lg"
+                               placeholder="Presencial / Telemedicina" />
+                    </div>
+                </div>
+
+                <div class="form-check form-switch mt-4">
+                    <input asp-for="Activo" class="form-check-input" type="checkbox" id="activoSwitch">
+                    <label class="form-check-label fw-semibold" for="activoSwitch">
+                        Médico Activo
+                    </label>
+                </div>
+
+                <div class="alert alert-info border-0 small mt-4">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Los horarios se asignarán automáticamente según la plantilla configurada.
+                </div>
+
+                <hr class="my-4" />
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Medicos" class="btn btn-light px-4">
+                        <i class="fas fa-arrow-left me-1"></i> Volver
+                    </a>
+                    <button type="submit" class="btn btn-primary px-5">
+                        <i class="fas fa-save me-1"></i> Guardar Médico
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.getElementById('formCrearMedico')
+            .addEventListener('submit', function () {
+                // aquí luego metes loader con SweetAlert si quieres 😏
+            });
+    </script>
+}
+}

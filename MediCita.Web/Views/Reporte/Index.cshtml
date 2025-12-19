@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "Panel de Reportes";
+}
+
+<div class="container py-5">
+
+    <h2 class="fw-bold mb-4 text-primary text-center">
+        Panel de Reportes – MediCita
+    </h2>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger text-center">
+            @TempData["Error"]
+        </div>
+    }
+
+    <div class="row g-4 justify-content-center">
+
+        <!-- REPORTE DE CITAS -->
+        <div class="col-md-5">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">Reporte de Citas Médicas</h5>
+
+                    <form asp-action="ReporteCitas" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label">Fecha Inicio</label>
+                            <input type="date" name="fechaInicio" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fecha Fin</label>
+                            <input type="date" name="fechaFin" class="form-control" required />
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary">
+                                Consultar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORTE DE VENTAS -->
+        <div class="col-md-5">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">Reporte de Ventas</h5>
+
+                    <form asp-action="ReporteVentas" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label">Fecha Inicio</label>
+                            <input type="date" name="fechaInicio" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fecha Fin</label>
+                            <input type="date" name="fechaFin" class="form-control" required />
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-success">
+                                Consultar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

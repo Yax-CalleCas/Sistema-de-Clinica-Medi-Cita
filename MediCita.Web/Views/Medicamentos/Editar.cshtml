@@ -1,0 +1,119 @@
+﻿@model MediCita.Web.Entidades.Medicamento
+
+@{
+    ViewData["Title"] = "Editar Medicamento";
+    bool sinDescuento = string.IsNullOrWhiteSpace(Model.Promocion);
+}
+
+<div class="container mt-4">
+    <h3 class="mb-4">Editar Medicamento</h3>
+
+    @if (ViewData["Mensaje"] != null)
+    {
+        <div class="alert alert-danger">@ViewData["Mensaje"]</div>
+    }
+
+    <form asp-action="Editar" method="post">
+        <input type="hidden" asp-for="IdMedicamento" />
+
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input asp-for="Nombre" class="form-control" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Laboratorio</label>
+            <input asp-for="Laboratorio" class="form-control" />
+            <span asp-validation-for="Laboratorio" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Precio</label>
+            <input asp-for="Precio" type="number" step="0.01" class="form-control" />
+            <span asp-validation-for="Precio" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Stock</label>
+            <input asp-for="Stock" type="number" class="form-control" />
+            <span asp-validation-for="Stock" class="text-danger"></span>
+        </div>
+
+        <!-- Imagen -->
+        <div class="mb-3">
+            <label class="form-label">Imagen (URL)</label>
+            <input asp-for="ImagenUrl" id="ImagenUrlInput" class="form-control" />
+            <div class="mt-2">
+                <img id="ImagenPreview"
+                     src="@(!string.IsNullOrWhiteSpace(Model.ImagenUrl)
+                                                 ? Model.ImagenUrl
+                                                 : "https://via.placeholder.com/200x200?text=Sin+Imagen")"
+                     class="img-thumbnail"
+                     style="max-height:200px" />
+            </div>
+        </div>
+
+        <!-- PROMOCIÓN -->
+        <div class="mb-3">
+            <label class="form-label">Promoción (solo %)</label>
+
+            <div class="form-check mb-2">
+                <input class="form-check-input"
+                       type="checkbox"
+                       id="chkSinDescuento"
+                       @(sinDescuento ? "checked" : "") />
+                <label class="form-check-label" for="chkSinDescuento">
+                    Sin descuento
+                </label>
+            </div>
+
+            <input asp-for="Promocion"
+                   id="PromocionInput"
+                   class="form-control"
+                   placeholder="Ejemplo: 15%"
+                   disabled="@(sinDescuento)" />
+
+            <small class="text-muted">
+                Solo se acepta porcentaje. Ejemplo: 10%
+            </small>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Descripción</label>
+            <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Categoría</label>
+            <input asp-for="Categoria" class="form-control" />
+        </div>
+
+        <div class="text-end">
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-success ms-2">Actualizar</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const imgInput = document.getElementById('ImagenUrlInput');
+        const imgPreview = document.getElementById('ImagenPreview');
+        const chkSinDescuento = document.getElementById('chkSinDescuento');
+        const promoInput = document.getElementById('PromocionInput');
+
+        imgInput.addEventListener('input', () => {
+            imgPreview.src = imgInput.value || imgPreview.src;
+        });
+
+        chkSinDescuento.addEventListener('change', () => {
+            promoInput.disabled = chkSinDescuento.checked;
+            if (chkSinDescuento.checked) {
+                promoInput.value = '';
+            }
+        });
+    </script>
+}

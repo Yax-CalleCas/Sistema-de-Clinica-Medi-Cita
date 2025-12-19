@@ -1,0 +1,79 @@
+﻿@model List<MediCita.Web.Entidades.Cita>
+@{
+    ViewData["Title"] = "Agenda Médica";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Mi Agenda de Citas</h2>
+        <span class="badge bg-secondary">Total: @Model.Count</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover shadow-sm border">
+            <thead class="table-dark">
+                <tr>
+                    <th>Paciente</th>
+                    <th>Fecha</th>
+                    <th>Horario</th>
+                    <th>Monto</th>
+                    <th>Estado</th>
+                    <th class="text-center">Gestión</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td>@c.Paciente</td>
+                        <td>@c.FechaCita.ToShortDateString()</td>
+                        <td>
+                            <small class="text-muted">@c.HoraInicio.ToString(@"hh\:mm") - @c.HoraFin.ToString(@"hh\:mm")</small>
+                        </td>
+                        <td>S/ @c.MontoPagar.ToString("F2")</td>
+                        <td>
+                            @if (c.Estado == "P")
+                            {
+                                <span class="badge bg-warning text-dark">Pendiente</span>
+                            }
+                            else if (c.Estado == "A")
+                            {
+
+                                <span class="badge bg-success">Atendida</span>
+                            }
+                            else
+                            {
+
+                                <span class="badge bg-danger">Cancelada</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            @if (c.Estado == "P")
+                            {
+                                <a class="btn btn-success btn-sm px-4"
+                                   asp-action="Atender"
+                                   asp-route-idCita="@c.IdCita">
+                                    Atender
+                                </a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-light btn-sm disabled">Finalizada</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    @* Opcional: Script para SweetAlert2 si lo tienes instalado *@
+    @if (TempData["Success"] != null)
+    {
+        <script>
+            Swal.fire('¡Éxito!', '@TempData["Success"]', 'success');
+        </script>
+    }
+}

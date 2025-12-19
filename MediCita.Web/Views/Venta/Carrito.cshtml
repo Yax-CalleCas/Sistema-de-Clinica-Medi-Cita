@@ -1,0 +1,154 @@
+﻿@model List<MediCita.Web.Entidades.DetalleVenta>
+@{
+    ViewData["Title"] = "Mi Carrito";
+    decimal totalFinal = Model.Sum(x => x.Importe);
+    decimal subtotal = totalFinal / 1.18m;
+    decimal igv = totalFinal - subtotal;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<div class="container py-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold text-dark mb-0"><i class="fas fa-shopping-basket me-2 text-primary"></i>Mi Carrito</h2>
+            <p class="text-muted mb-0">Tienes @Model.Count producto(s) en tu lista</p>
+        </div>
+        <a asp-action="Catalogo" class="btn btn-outline-primary rounded-pill px-4 fw-bold">
+            <i class="fas fa-plus me-2"></i>Agregar más productos
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-lg rounded-4 py-5 text-center">
+            <div class="card-body">
+                <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle mb-4" style="width: 120px; height: 120px;">
+                    <i class="fas fa-cart-plus fa-4x text-muted opacity-50"></i>
+                </div>
+                <h3 class="fw-bold">Tu carrito está esperando...</h3>
+                <p class="text-muted mb-4 fs-5">Parece que aún no has seleccionado ningún medicamento.</p>
+                <a asp-action="Catalogo" class="btn btn-primary btn-lg rounded-pill px-5 shadow">
+                    Ver Catálogo de Medicamentos
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr class="text-muted small text-uppercase">
+                                    <th class="ps-4 py-3 border-0">Producto</th>
+                                    <th class="text-center py-3 border-0">Precio</th>
+                                    <th class="text-center py-3 border-0">Cantidad</th>
+                                    <th class="text-end pe-4 py-3 border-0">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="ps-4 py-4 border-bottom">
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-primary bg-opacity-10 text-primary rounded-3 d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 55px; height: 55px;">
+                                                    <i class="fas fa-prescription-bottle-alt fs-4"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-dark fs-6">@item.NombreMedicamento</div>
+                                                    @if (!string.IsNullOrEmpty(item.Promocion))
+                                                    {
+                                                        <span class="badge bg-success-subtle text-success border border-success-subtle fw-bold rounded-pill" style="font-size: 0.7rem;">
+                                                            <i class="fas fa-bolt me-1"></i> @item.Promocion
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center border-bottom">
+                                            <span class="fw-bold text-dark">S/ @item.PrecioUnitario.ToString("N2")</span>
+                                        </td>
+                                        <td class="text-center border-bottom">
+                                            <form asp-action="ActualizarCantidad" method="post" class="d-inline-flex align-items-center bg-white border rounded-pill shadow-sm p-1">
+                                                <input type="hidden" name="idMedicamento" value="@item.IdMedicamento" />
+                                                <button type="submit" name="cantidad" value="@(item.Cantidad - 1)" class="btn btn-sm btn-light rounded-circle border-0" @(item.Cantidad <= 1 ? "disabled" : "")>
+                                                    <i class="fas fa-minus text-muted small"></i>
+                                                </button>
+                                                <input type="text" value="@item.Cantidad" class="form-control form-control-sm border-0 bg-transparent text-center fw-bold p-0" readonly style="width: 40px;" />
+                                                <button type="submit" name="cantidad" value="@(item.Cantidad + 1)" class="btn btn-sm btn-light rounded-circle border-0">
+                                                    <i class="fas fa-plus text-muted small"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                        <td class="text-end pe-4 border-bottom">
+                                            <div class="d-flex justify-content-end align-items-center gap-3">
+                                                <span class="fw-bold fs-5 text-primary">S/ @item.Importe.ToString("N2")</span>
+                                                <form asp-action="Eliminar" method="post">
+                                                    <input type="hidden" name="idMedicamento" value="@item.IdMedicamento" />
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm border-0 rounded-circle" title="Eliminar del carrito">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow rounded-4 sticky-top" style="top: 2rem; z-index: 10;">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4 text-dark border-bottom pb-2">Resumen de pedido</h5>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Subtotal (Base)</span>
+                            <span class="fw-bold text-dark">S/ @subtotal.ToString("N2")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">IGV (18%)</span>
+                            <span class="fw-bold text-dark">S/ @igv.ToString("N2")</span>
+                        </div>
+
+                        @if (Model.Sum(x => x.Descuento) > 0)
+                        {
+                            <div class="d-flex justify-content-between mb-3 text-success">
+                                <span class="fw-bold">Ahorro total</span>
+                                <span class="fw-bold">- S/ @Model.Sum(x => x.Descuento).ToString("N2")</span>
+                            </div>
+                        }
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between mb-4 align-items-center">
+                            <span class="h5 fw-bold mb-0">TOTAL A PAGAR</span>
+                            <span class="h2 fw-bold text-primary mb-0">S/ @totalFinal.ToString("N2")</span>
+                        </div>
+
+                        <div class="alert alert-warning border-0 rounded-3 small mb-4">
+                            <i class="fas fa-shield-alt me-2"></i>Pago 100% seguro y garantizado.
+                        </div>
+
+                        <a asp-action="ConfirmarCompra" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold shadow py-3 mb-3">
+                            <i class="fas fa-lock me-2"></i>CONTINUAR COMPRA
+                        </a>
+
+                        <div class="text-center">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" height="20" class="mx-2 grayscale opacity-50" alt="PayPal">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" height="15" class="mx-2 grayscale opacity-50" alt="Visa">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<link href="~/css/site.css" rel="stylesheet" />

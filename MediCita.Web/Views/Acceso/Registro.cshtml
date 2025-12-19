@@ -1,0 +1,144 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro - MediCita</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-4">
+
+                        <h3 class="text-center fw-bold text-primary mb-4">
+                            Registrar Paciente
+                        </h3>
+
+                        @if (TempData["ErrorRegistro"] != null)
+                        {
+                            <div class="alert alert-danger">
+                                @TempData["ErrorRegistro"]
+                            </div>
+                        }
+
+                        @if (TempData["ExitoRegistro"] != null)
+                        {
+                            <div class="alert alert-success">
+                                @TempData["ExitoRegistro"]
+                            </div>
+                        }
+
+                        <form asp-controller="Acceso"
+                              asp-action="Registro"
+                              method="post"
+                              class="needs-validation"
+                              novalidate>
+
+                            <!-- Nombre -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Nombre completo</label>
+                                <input type="text"
+                                       class="form-control"
+                                       name="nombreCompleto"
+                                       minlength="3"
+                                       required />
+                                <div class="invalid-feedback">
+                                    Ingresa tu nombre completo (mínimo 3 caracteres).
+                                </div>
+                            </div>
+
+                            <!-- DNI -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">DNI (Opcional)</label>
+                                <input type="text"
+                                       class="form-control"
+                                       name="dni"
+                                       pattern="[0-9]{8}" />
+                                <div class="invalid-feedback">
+                                    El DNI debe contener 8 dígitos numéricos.
+                                </div>
+                                <small class="text-muted">
+                                    Déjalo vacío si no aplica.
+                                </small>
+                            </div>
+
+                            <!-- Correo -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Correo electrónico</label>
+                                <input type="email"
+                                       class="form-control"
+                                       name="correo"
+                                       required />
+                                <div class="invalid-feedback">
+                                    Ingresa un correo electrónico válido.
+                                </div>
+                            </div>
+
+                            <!-- Contraseña -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Contraseña</label>
+                                <input type="password"
+                                       class="form-control"
+                                       name="clave"
+                                       minlength="6"
+                                       required />
+                                <div class="invalid-feedback">
+                                    La contraseña debe tener al menos 6 caracteres.
+                                </div>
+                            </div>
+
+                            <button type="submit"
+                                    class="btn btn-primary w-100 mt-3">
+                                Crear cuenta
+                            </button>
+
+                            <div class="text-center mt-3">
+                                <a asp-controller="Acceso"
+                                   asp-action="Login">
+                                    ¿Ya tienes cuenta? Inicia sesión
+                                </a>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Validación Bootstrap -->
+    <script>
+        (function () {
+            'use strict';
+
+            const forms = document.querySelectorAll('.needs-validation');
+
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+
+</body>
+</html>

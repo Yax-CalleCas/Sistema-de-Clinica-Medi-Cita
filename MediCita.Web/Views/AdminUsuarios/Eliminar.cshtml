@@ -1,0 +1,19 @@
+﻿@model MediCita.Web.Entidades.Usuario
+@{
+    ViewData["Title"] = "Eliminar Usuario";
+}
+
+<div class="container mt-4">
+    <h2 class="text-danger mb-4">Eliminar Usuario</h2>
+
+    <div class="alert alert-danger">
+        ¿Seguro que deseas eliminar al usuario <strong>@Model.NombreCompleto</strong>?
+    </div>
+
+    <form asp-action="Eliminar" method="post">
+        <input type="hidden" asp-for="IdUsuario" />
+
+        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

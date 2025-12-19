@@ -1,0 +1,42 @@
+﻿@model dynamic
+@{
+    ViewData["Title"] = "Crear Paciente";
+}
+
+<h2>Crear Nuevo Paciente</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form asp-action="CrearPaciente" method="post">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label>Nombre Completo *</label>
+            <input type="text" name="nombre" class="form-control" required />
+        </div>
+        <div class="col-md-6">
+            <label>DNI</label>
+            <input type="text" name="dni" class="form-control" maxlength="8" />
+        </div>
+        <div class="col-md-6">
+            <label>Correo *</label>
+            <input type="email" name="correo" class="form-control" required />
+        </div>
+        <div class="col-md-6">
+            <label>Contraseña *</label>
+            <input type="password" name="clave" class="form-control" required />
+        </div>
+    </div>
+    <hr />
+    <button type="submit" class="btn btn-success">Guardar Paciente</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger mt-3">
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    </div>
+}

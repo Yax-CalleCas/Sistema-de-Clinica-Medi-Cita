@@ -1,0 +1,284 @@
+﻿@model List<MediCita.Web.Entidades.Medicamento>
+@{
+    ViewData["Title"] = "Farmacia MediCita";
+    string buscarActual = Context.Request.Query["buscar"];
+    string catActual = Context.Request.Query["categoria"];
+}
+
+<div class="container py-4">
+    <div class="row align-items-center mb-5 g-3">
+        <div class="col-md-8">
+            <form asp-action="Catalogo" method="get">
+                <div class="input-group search-box shadow-sm rounded-pill overflow-hidden bg-white border-0">
+                    <span class="input-group-text border-0 bg-white ps-4">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" name="buscar" value="@buscarActual" class="form-control border-0 py-3" placeholder="¿Qué medicamento buscas?">
+
+                    <select name="categoria" class="form-select border-0 border-start d-none d-lg-block bg-light" style="max-width: 200px;">
+                        <option value="">Todas las categorías</option>
+                        <option value="Analgesicos" selected="@(catActual == "Analgesicos")">Analgésicos</option>
+                        <option value="Antibioticos" selected="@(catActual == "Antibioticos")">Antibióticos</option>
+                        <option value="Antigripales" selected="@(catActual == "Antigripales")">Antigripales</option>
+                    </select>
+
+                    <button class="btn btn-primary px-4 fw-bold shadow-none" type="submit">BUSCAR</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-4 text-md-end">
+            <a asp-action="Carrito" class="btn btn-cart-side rounded-pill shadow-sm px-4 py-2">
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="position-relative me-3">
+                        <i class="fas fa-shopping-bag fs-5"></i>
+                        @if (ViewBag.CountCarrito > 0)
+                        {
+                            <span class="badge-dot">@ViewBag.CountCarrito</span>
+                        }
+                    </div>
+                    <div class="text-start line-height-1">
+                        <small class="d-block x-small opacity-75">Tu carrito</small>
+                        <span class="fw-bold">Ver Compra</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-pills fa-3x text-light mb-3"></i>
+            <h4 class="text-muted">No encontramos resultados para tu búsqueda</h4>
+            <a href="@Url.Action("Catalogo")" class="btn btn-link">Ver todo el catálogo</a>
+        </div>
+    }
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var item in Model)
+        {
+            decimal precioFinal = item.Precio;
+            bool tienePromo = !string.IsNullOrWhiteSpace(item.Promocion) && item.Promocion.Contains("%");
+            int stockActual = item.Stock ?? 0;
+
+            if (tienePromo)
+            {
+                var porcentajeStr = item.Promocion.Replace("%", "").Trim();
+                if (decimal.TryParse(porcentajeStr, out decimal porcentaje))
+                    precioFinal = item.Precio - (item.Precio * porcentaje / 100);
+            }
+
+            <div class="col">
+                <div class="card h-100 product-card border-0 shadow-sm overflow-hidden">
+                    @if (tienePromo)
+                    {
+                        <div class="promo-tag">OFERTA @item.Promocion</div>
+                    }
+
+                    <div class="product-img-box">
+                        <img src="@(item.ImagenUrl ?? "https://via.placeholder.com/300?text=Sin+Imagen")"
+                             class="img-fluid p-4" alt="@item.Nombre"
+                             onerror="this.src='https://via.placeholder.com/300?text=Medicamento'" />
+                    </div>
+
+                    <div class="card-body p-3 d-flex flex-column">
+                        <div class="mb-2">
+                            <span class="badge bg-soft-primary text-primary x-small">@item.Laboratorio</span>
+                        </div>
+                        <h6 class="product-name mb-3">@item.Nombre</h6>
+
+                        <div class="mt-auto">
+                            <div class="price-box mb-3">
+                                @if (tienePromo)
+                                {
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="current-price text-danger">S/ @precioFinal.ToString("F2")</span>
+                                        <span class="old-price">S/ @item.Precio.ToString("F2")</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="current-price text-dark">S/ @item.Precio.ToString("F2")</div>
+                                }
+                            </div>
+
+                            <div class="stock-info mb-3">
+                                @if (stockActual <= 0)
+                                {
+                                    <span class="text-muted x-small fw-bold"><i class="fas fa-ban me-1"></i>Agotado</span>
+                                }
+                                else if (stockActual < 10)
+                                {
+                                    <span class="text-orange x-small fw-bold"><i class="fas fa-exclamation-triangle me-1"></i>Quedan @stockActual</span>
+                                }
+                                else
+                                {
+                                    <span class="text-success x-small fw-bold"><i class="fas fa-check-circle me-1"></i>En stock</span>
+                                }
+                            </div>
+
+                            @if (stockActual > 0)
+                            {
+                                <form asp-action="AgregarCarrito" method="post">
+                                    <input type="hidden" name="idMedicamento" value="@item.IdMedicamento" />
+                                    <div class="d-flex gap-2">
+                                        <div class="qty-pill d-flex align-items-center border">
+                                            <button type="button" class="btn-qty btn-minus"><i class="fas fa-minus"></i></button>
+                                            <input type="number" name="cantidad" value="1" min="1" max="@stockActual" class="input-qty-val" readonly />
+                                            <button type="button" class="btn-qty btn-plus"><i class="fas fa-plus"></i></button>
+                                        </div>
+                                        <button type="submit" class="btn @(tienePromo ? "btn-danger" : "btn-primary") rounded-pill flex-grow-1 fw-bold btn-sm py-2">
+                                            AGREGAR
+                                        </button>
+                                    </div>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    :root {
+        --med-blue: #006ce4;
+        --med-dark: #1e293b;
+        --soft-blue: #e0f2fe;
+    }
+
+    body {
+        background-color: #f1f5f9;
+        font-family: 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* Buscador */
+    .search-box {
+        border: 1px solid #dee2e6 !important;
+    }
+
+        .search-box select:focus, .search-box input:focus {
+            box-shadow: none;
+        }
+
+    /* Botón Carrito */
+    .btn-cart-side {
+        background: white;
+        border: 1px solid #e2e8f0;
+        color: var(--med-dark);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        .btn-cart-side:hover {
+            border-color: var(--med-blue);
+            color: var(--med-blue);
+            background: var(--soft-blue);
+        }
+
+    /* Badge */
+    .badge-dot {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ef4444;
+        color: white;
+        font-size: 0.65rem;
+        min-width: 18px;
+        height: 18px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 5px;
+        border: 2px solid white;
+        font-weight: bold;
+    }
+
+    /* Tarjetas */
+    .product-card {
+        transition: transform 0.3s ease;
+        background: #fff;
+    }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08) !important;
+        }
+
+    .promo-tag {
+        position: absolute;
+        top: 12px;
+        left: 0;
+        background: #ef4444;
+        color: white;
+        font-size: 0.65rem;
+        font-weight: bold;
+        padding: 4px 12px;
+        border-radius: 0 20px 20px 0;
+        z-index: 10;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .bg-soft-primary {
+        background-color: #e0f2fe;
+    }
+
+    .text-orange {
+        color: #f97316;
+    }
+
+    .product-name {
+        font-size: 0.95rem;
+        line-height: 1.3;
+        font-weight: 600;
+        color: var(--med-dark);
+        height: 2.6rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .old-price {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        text-decoration: line-through;
+    }
+
+    .current-price {
+        font-size: 1.25rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    /* Qty Pill */
+    .qty-pill {
+        background: #f8fafc;
+        border-radius: 20px;
+        padding: 2px 5px;
+    }
+
+    .btn-qty {
+        border: none;
+        background: transparent;
+        color: #64748b;
+        font-size: 0.7rem;
+        padding: 5px 8px;
+        transition: color 0.2s;
+    }
+
+        .btn-qty:hover {
+            color: var(--med-blue);
+        }
+
+    .input-qty-val {
+        width: 25px;
+        border: none;
+        background: transparent;
+        text-align: center;
+        font-weight: bold;
+        font-size: 0.8rem;
+    }
+</style>
