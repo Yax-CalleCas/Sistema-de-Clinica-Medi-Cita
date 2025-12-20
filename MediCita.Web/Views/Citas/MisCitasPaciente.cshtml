@@ -1,25 +1,19 @@
-﻿@model List<MediCita.Web.Entidades.Cita>
+@model List<MediCita.Web.Entidades.Cita>
 @{
     ViewData["Title"] = "Mis Citas";
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold"> Mis Citas Médicas</h2>
+        <h2 class="fw-bold"><i class="bi bi-calendar-check"></i> Mis Citas Médicas</h2>
         <span class="text-muted">Total: @Model.Count</span>
     </div>
 
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
+    @* Bloque de Alertas (Mantener igual) *@
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["Success"]
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
@@ -27,7 +21,7 @@
     @if (!Model.Any())
     {
         <div class="alert alert-info text-center shadow-sm">
-             Aún no tienes citas registradas.
+            Aún no tienes citas registradas. <a href="@Url.Action("Crear")" class="alert-link">¡Reserva una ahora!</a>
         </div>
     }
     else
@@ -38,35 +32,46 @@
                     <tr>
                         <th>Especialista (CMP)</th>
                         <th>Fecha</th>
-                        <th>Horario</th>
+                        <th>Horarios</th>
                         <th>Monto</th>
-                        <th>Estado</th>
+                        <th>Pago</th> @* <-- Nueva Columna *@
+                        <th>Estado Cita</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-center">
                     @foreach (var c in Model.OrderByDescending(x => x.FechaCita))
                     {
                         <tr>
-                            <td class="fw-semibold">@c.CMP</td>
+                            <td class="fw-semibold text-start ps-4">
+                                <i class="bi bi-person-badge me-2"></i>@c.CMP
+                            </td>
                             <td>@c.FechaCita.ToString("dd/MM/yyyy")</td>
                             <td class="text-muted">
-                                @c.HoraInicio.ToString(@"hh\:mm") - @c.HoraFin.ToString(@"hh\:mm")
+                                <i class="bi bi-clock me-1"></i> @c.HoraInicio.ToString(@"hh\:mm") - @c.HoraFin.ToString(@"hh\:mm")
                             </td>
-                            <td class="fw-bold">@c.MontoPagar.ToString("C")</td>
-                            <td class="text-center">
+                            <td class="fw-bold text-success">
+                                S/ @c.MontoPagar.ToString("F2")
+                            </td>
+                            <td>
+                                @* Lógica de Pago: Como usamos el nuevo SP, todas nacen pagadas *@
+                                <span class="badge bg-light text-success border border-success px-3">
+                                    <i class="bi bi-credit-card-2-front me-1"></i> Pagado
+                                </span>
+                            </td>
+                            <td>
                                 @switch (c.Estado)
                                 {
                                     case "P":
-                                        <span class="badge rounded-pill bg-warning text-dark"> Pendiente</span>
+                                        <span class="badge rounded-pill bg-warning text-dark">Pendiente</span>
                                         break;
                                     case "A":
-                                        <span class="badge rounded-pill bg-success"> Atendida</span>
+                                        <span class="badge rounded-pill bg-success">Atendida</span>
                                         break;
                                     case "C":
-                                        <span class="badge rounded-pill bg-danger"> Cancelada</span>
+                                        <span class="badge rounded-pill bg-danger">Cancelada</span>
                                         break;
                                     default:
-                                        <span class="badge rounded-pill bg-secondary"> Desconocido</span>
+                                        <span class="badge rounded-pill bg-secondary">@c.Estado</span>
                                         break;
                                 }
                             </td>
