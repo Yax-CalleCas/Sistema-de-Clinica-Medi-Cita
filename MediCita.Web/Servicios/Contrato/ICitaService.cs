@@ -1,4 +1,4 @@
-﻿using MediCita.Web.Entidades;
+using MediCita.Web.Entidades;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,7 +18,7 @@ namespace MediCita.Web.Servicios.Contrato
 
         // Atender una cita (marcar como atendida, cancelada, etc.)
         Task<bool> AtenderCita(int idCita, string estado, string? nota = null);
-
+        Task<int> CrearCitaConPago(int idPaciente, int idMedico, DateTime fecha, TimeSpan horaInicio, TimeSpan horaFin, decimal monto, string idTransaccion);
         // Listar horarios disponibles de un médico para una fecha
         Task<List<HorarioMedico>> ListarHorariosDisponibles(int idMedico, DateTime fecha);
     }
