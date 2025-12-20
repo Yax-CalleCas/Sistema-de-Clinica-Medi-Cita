@@ -1,4 +1,4 @@
-﻿using MediCita.Web.Entidades;
+using MediCita.Web.Entidades;
 using MediCita.Web.Servicios.Contrato;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -134,6 +134,33 @@ namespace MediCita.Web.Servicios.Implementacion
             }
         }
 
+        public async Task<int> CrearCitaConPago(int idPaciente, int idMedico, DateTime fecha,
+                                        TimeSpan horaInicio, TimeSpan horaFin,
+                                        decimal monto, string idTransaccion)
+        {
+            using (SqlConnection cn = new SqlConnection(cadena))
+            using (SqlCommand cmd = new SqlCommand("usp_RegistrarCitaConPago", cn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@IdPaciente", idPaciente);
+                cmd.Parameters.AddWithValue("@IdMedico", idMedico);
+                cmd.Parameters.AddWithValue("@Fecha", fecha.Date);
+                cmd.Parameters.AddWithValue("@HoraInicio", horaInicio);
+                cmd.Parameters.AddWithValue("@HoraFin", horaFin);
+                cmd.Parameters.AddWithValue("@Monto", monto);
+                cmd.Parameters.AddWithValue("@IdTransaccion", idTransaccion);
+
+                await cn.OpenAsync();
+                var result = await cmd.ExecuteScalarAsync();
+
+                int idGenerado = Convert.ToInt32(result);
+
+                if (idGenerado == -1)
+                    throw new Exception("El horario ya no se encuentra disponible.");
+
+                return idGenerado;
+            }
+        }
         // 5. Horarios Disponibles: Usa la entidad HorarioMedico simplificada
         public async Task<List<HorarioMedico>> ListarHorariosDisponibles(int idMedico, DateTime fecha)
         {
