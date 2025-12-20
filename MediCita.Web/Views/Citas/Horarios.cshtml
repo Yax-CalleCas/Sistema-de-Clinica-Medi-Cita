@@ -1,110 +1,83 @@
-﻿@model List<MediCita.Web.Entidades.HorarioMedico>
-
+@model List<MediCita.Web.Entidades.HorarioMedico>
 @{
-    ViewData["Title"] = "Seleccionar horario";
-    int idPaciente = ViewBag.IdPaciente;
-    int idMedico = ViewBag.IdMedico;
-    DateTime fecha = (DateTime)ViewBag.Fecha;
-    decimal precio = ViewBag.Precio;
-
-    bool esHoy = fecha.Date == DateTime.Today;
+    ViewData["Title"] = "Seleccionar Horario";
+    var fecha = (DateTime)ViewBag.Fecha;
+    var precio = (decimal)ViewBag.Precio;
 }
 
-<div class="container py-4">
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h3 class="card-title text-primary">Pasos finales para su cita</h3>
+            <p class="text-muted">Médico: <strong>@ViewBag.NombreMedico</strong> | Fecha: <strong>@fecha.ToLongDateString()</strong></p>
+            <hr />
 
-    <!-- Navegación -->
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a asp-action="Crear">Médicos</a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">
-                Horarios
-            </li>
-        </ol>
-    </nav>
-
-    <!-- Encabezado -->
-    <div class="row align-items-center mb-4">
-        <div class="col-md-8">
-            <h2 class="fw-bold mb-1">
-                Horarios disponibles
-            </h2>
-            <p class="text-muted mb-0">
-                Fecha seleccionada: <strong>@fecha.ToLongDateString()</strong>
-            </p>
-        </div>
-        <div class="col-md-4 text-md-end">
-            <span class="fs-5 fw-semibold text-primary">
-                Precio: S/ @precio.ToString("F2")
-            </span>
+            <h5 class="mb-3">Horas disponibles:</h5>
+            <div class="row row-cols-2 row-cols-md-4 g-3">
+                @foreach (var h in Model)
+                {
+                    <div class="col">
+                        <button type="button" class="btn btn-outline-success w-100 py-3 fw-bold"
+                                onclick="abrirPago('@h.HoraInicio', '@h.HoraFin')">
+                            @h.HoraInicio.ToString(@"hh\:mm")
+                        </button>
+                    </div>
+                }
+            </div>
         </div>
     </div>
+</div>
 
-    <!-- Selector de fecha -->
-    <div class="d-flex gap-2 mb-4">
-        <a asp-action="Horarios"
-           asp-route-idMedico="@idMedico"
-           asp-route-fecha="@DateTime.Today.ToString("yyyy-MM-dd")"
-           class="btn @(esHoy ? "btn-primary" : "btn-outline-primary")">
-            Hoy
-        </a>
+<div class="modal fade" id="modalPago" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title">Confirmar Pago y Reserva</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="ConfirmarCitaConPago" method="post">
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <h6 class="text-muted">Monto a pagar:</h6>
+                        <h2 class="text-success">S/ @precio.ToString("F2")</h2>
+                    </div>
 
-        <a asp-action="Horarios"
-           asp-route-idMedico="@idMedico"
-           asp-route-fecha="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")"
-           class="btn @(!esHoy ? "btn-primary" : "btn-outline-primary")">
-            Mañana
-        </a>
-    </div>
+                    <input type="hidden" name="idPaciente" value="@ViewBag.IdPaciente" />
+                    <input type="hidden" name="idMedico" value="@ViewBag.IdMedico" />
+                    <input type="hidden" name="fecha" value="@fecha.ToString("yyyy-MM-dd")" />
+                    <input type="hidden" name="monto" value="@precio" />
+                    <input type="hidden" id="hInicio" name="horaInicioStr" />
+                    <input type="hidden" id="hFin" name="horaFinStr" />
 
-    <!-- Mensaje de error -->
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">
-            @TempData["Error"]
-        </div>
-    }
-
-    <!-- Listado de horarios -->
-    @if (Model != null && Model.Any())
-    {
-        <div class="row g-3">
-            @foreach (var h in Model)
-            {
-                <div class="col-xl-3 col-lg-4 col-md-6">
-                    <div class="card h-100 shadow-sm border-0">
-                        <div class="card-body d-flex flex-column text-center">
-                            <h5 class="fw-semibold mb-3">
-                                @h.HoraInicio.ToString(@"hh\:mm")
-                                -
-                                @h.HoraFin.ToString(@"hh\:mm")
-                            </h5>
-
-                            <form asp-action="CrearCita" method="post" class="mt-auto">
-                                <input type="hidden" name="idPaciente" value="@idPaciente" />
-                                <input type="hidden" name="idMedico" value="@idMedico" />
-                                <input type="hidden" name="fecha" value="@fecha.ToString("yyyy-MM-dd")" />
-                                <input type="hidden" name="horaInicioStr" value="@h.HoraInicio.ToString(@"hh\:mm")" />
-                                <input type="hidden" name="horaFinStr" value="@h.HoraFin.ToString(@"hh\:mm")" />
-                                <input type="hidden" name="monto" value="@precio" />
-
-                                <button type="submit"
-                                        class="btn btn-primary w-100">
-                                    Reservar cita
-                                </button>
-                            </form>
+                    <div class="mb-3">
+                        <label class="form-label">Número de Tarjeta</label>
+                        <input type="text" class="form-control" placeholder="0000 0000 0000 0000" maxlength="16" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Expiración</label>
+                            <input type="text" class="form-control" placeholder="MM/YY" required>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">CVV</label>
+                            <input type="password" class="form-control" placeholder="123" maxlength="3" required>
                         </div>
                     </div>
                 </div>
-            }
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary px-4">Pagar y Reservar</button>
+                </div>
+            </form>
         </div>
-    }
-    else
-    {
-        <div class="alert alert-warning text-center">
-            No hay horarios disponibles para esta fecha.
-        </div>
-    }
-
+    </div>
 </div>
+
+<script>
+    function abrirPago(inicio, fin) {
+        document.getElementById('hInicio').value = inicio;
+        document.getElementById('hFin').value = fin;
+        var myModal = new bootstrap.Modal(document.getElementById('modalPago'));
+        myModal.show();
+    }
+</script>
